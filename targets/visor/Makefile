@@ -4,13 +4,15 @@ TARGET_NAMES := kyuvisor.elf
 BUILD_POSTFIX := visor
 
 SOURCES := \
-	main.cc
+	main.cc \
+	mm/MemoryAllocator.cc \
+	mm/PageBitmap.cc
 
 include $(CUR_DIR)/../../make/common.mk
 
 ASFLAGS = -g -f elf64 -i $(INCLUDE_DIR)
 CFLAGS = -fpic -fno-stack-protector -mno-red-zone -I$(INCLUDE_DIR) -fno-threadsafe-statics
-CXXFLAGS = $(CFLAGS) -std=c++20
+CXXFLAGS = $(CFLAGS) -std=c++20 -fno-exceptions
 LDFLAGS = -z nodefaultlib -e entrypoint
 
 $(OUT_DIR)/kyuvisor.elf: $(OBJECTS)

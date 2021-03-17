@@ -51,6 +51,7 @@ namespace kyu::efi::protocol
 
     PROTOCOL_METHOD(fp_open_t, (struct _file_protocol_t* _this, struct _file_protocol_t** new_handle, echar16_t* filename, uint64_t open_mode, uint64_t attributes))
     PROTOCOL_METHOD(fp_read_t, (struct _file_protocol_t* _this, uint64_t* buffer_size, void* buffer))
+    PROTOCOL_METHOD(fp_set_position_t, (struct _file_protocol_t* _this, uint64_t position))
     PROTOCOL_METHOD(fp_get_info_t, (struct _file_protocol_t* _this, guid_t* information_type, uint64_t* buffer_size, void* buffer))
 
     typedef struct _file_protocol_t
@@ -62,7 +63,7 @@ namespace kyu::efi::protocol
         fp_read_t read;
         fp_open_t write;
         fp_open_t get_position;
-        fp_open_t set_position;
+        fp_set_position_t set_position;
         fp_get_info_t get_info;
         fp_open_t set_info;
         fp_open_t flush;

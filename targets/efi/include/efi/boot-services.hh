@@ -42,6 +42,7 @@ namespace kyu::efi
     PROTOCOL_METHOD(bs_wait_for_event_t, (uint64_t number_of_events, event_t* events, uint64_t* index))
     PROTOCOL_METHOD(bs_handle_protocol_t, (handle_t handle, guid_t* protocol, void** interface))
     PROTOCOL_METHOD(bs_locate_handle_buffer_t, (locate_search_type_t search_type, guid_t* protocol, void* search_key, uint64_t* buffer_size, handle_t** buffer))
+    PROTOCOL_METHOD(bs_copy_mem_t, (void* destination, void* source, uint64_t length))
 
     typedef struct _boot_services_t
     {
@@ -87,7 +88,7 @@ namespace kyu::efi
         protocol_padding_t install_multiple_protocol_interfaces;
         protocol_padding_t uninstall_multiple_protocol_interfaces;
         protocol_padding_t calculate_crc32;
-        protocol_padding_t copy_mem;
+        bs_copy_mem_t copy_mem;
         protocol_padding_t set_mem;
         protocol_padding_t create_event_ex;
     } boot_services_t;

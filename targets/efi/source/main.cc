@@ -23,13 +23,15 @@ efi::status_t efi_main(efi::handle_t module, efi::system_table_t* system_table)
     bs = system_table->boot_services;
 
     graphics::InitializeGraphics();
-    loader::LoadHypervisorFromFS();
+    loader::LocateHypervisor();
     graphics::LoadFont();
 
     con->clear_screen(con);
     graphics::DrawBackground();
     
-    console::PrintString("Hello from KyuLoader v0 :D\n");
+    console::PrintString("Hello from KyuLoader :D\n");
+
+    loader::MapHypervisor();
 
     uint64_t result = loader::RunHypervisor();
     console::PrintString("Got result: ");

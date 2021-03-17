@@ -14,65 +14,35 @@ extern "C" typedef __attribute__((sysv_abi)) uint64_t (*start_func_t)(kyu::pub::
 
 namespace kyu::loader
 {
-    efi::physical_address_t hypervisor_elf;
-
     efi::protocol::file_protocol_t* hypervisor_root;
+    efi::protocol::file_protocol_t* hypervisor_file;
+
+    start_func_t hypervisor_start;
 
     int RunHypervisor()
     {
-        using namespace barelib;
-        auto con = efi::system_table->console_out;
-
-        elf::elf64_ehdr* elf_header = (elf::elf64_ehdr*) hypervisor_elf;
-
-        uint64_t entrypoint_vaddr = elf_header->e_entry;
-
-        elf::elf64_phdr* current_phdr = (elf::elf64_phdr*) (hypervisor_elf + 64);
-        bool has_found = false;
-        for (int i = 0; i < elf_header->e_phnum; i++)
+        uint64_t hypervisor_mem_size = EFI_SIZE_TO_PAGES(1024 * 1024 * 100);
+        efi::physical_address_t hypervisor_mem;
+        efi::status_t status = efi::system_table->boot_services->allocate_pages(efi::allocate_any_pages, EfiRuntimeServicesData, hypervisor_mem_size, &hypervisor_mem);
+        if (status != 0)
         {
-            if (current_phdr->p_type == 1)
-            {
-                if (current_phdr->p_vaddr <= entrypoint_vaddr && current_phdr->p_vaddr + current_phdr->p_filesz >= entrypoint_vaddr)
-                {
-                    has_found = true;
-                    break;
-                }
-            }
-
-            current_phdr++;
+            console::PrintString("Failed to allocate memory for hypervisor!\n");
+            return status;
         }
-
-        if (! has_found)
-        {
-            console::PrintString("Couldn't find entrypoint, is the hypervisor corrupted?!\n");
-            return 1;
-        }
-
-        uint64_t entrypoint_addr = hypervisor_elf + current_phdr->p_offset + (entrypoint_vaddr - current_phdr->p_vaddr);
-
-        console::PrintString("Found entrypoint @ ");
-        console::PrintHex(entrypoint_addr);
-        console::PrintString("!\n");
-        console::PrintString("Starting the hypervisor!\n");
-
-        start_func_t test = (start_func_t) entrypoint_addr;
 
         pub::HypervisorStartConfig config;
         config.LoaderVersion = 0;
         config.MemeResult = 1337;
-        
-        console::PrintString("ps @ ");
-        console::PrintHex((uint64_t) console::PrintString);
-        console::PrintString("\n");
-
+        config.PreparedMemoryRegion = (void*) hypervisor_mem;
+        config.PreparedMemorySize = hypervisor_mem_size;
         
         config.LoaderFunctions.PrintString = LoaderPrintString;
+        config.LoaderFunctions.PrintHex = LoaderPrintHex;
 
-        return test(&config);
+        return hypervisor_start(&config);
     }
 
-    void LoadHypervisorFromFS()
+    void LocateHypervisor()
     {
         efi::status_t status = 0;
 
@@ -93,7 +63,6 @@ namespace kyu::loader
         }
 
         // Check each protocol until we have found the hypervisor
-        efi::protocol::file_protocol_t* hypervisor_file = nullptr;
         for (int i = 0; i < sfsp_handlecount; i++)
         {
             // Get the protocol from the handle
@@ -136,48 +105,88 @@ namespace kyu::loader
         if (hypervisor_file == nullptr)
         {
             con->output_string(con, L"Failed to find hypervisor!\r\n");
+            // TODO: PANIC
             return;
         }
+    }
 
-        // Get the file size
-        efi::protocol::file_info_t info;
-        uint64_t info_size = sizeof(info);
-        efi::guid_t info_guid = EFI_FILE_INFO_ID;
-        status = hypervisor_file->get_info(hypervisor_file, &info_guid, &info_size, &info);
+    void MapHypervisor()
+    {
+        using namespace barelib;
 
+        auto bs = efi::system_table->boot_services;
+        efi::status_t status = 0;
+        uint64_t buffer_size = 0;
+        
+        console::PrintString("Mapping hypervisor...\n");
+
+        efi::protocol::file_info_t file_info;
+        efi::guid_t file_info_guid = EFI_FILE_INFO_ID;
+        buffer_size = sizeof(file_info);
+        status = hypervisor_file->get_info(hypervisor_file, &file_info_guid, &buffer_size, &file_info);
         if (status != 0)
         {
-            con->output_string(con, L"Failed to get hypervisor file info\r\n");
+            console::PrintString("Couldn't get file info!\n");
             return;
         }
 
-        con->output_string(con, L"Loading: ");
-        con->output_string(con, info.file_name);
-        con->output_string(con, L"\r\n");
-
-        // Allocate enough memory for the hypervisor
-        status = bs->allocate_pages(efi::allocate_any_pages, EfiRuntimeServicesData, EFI_SIZE_TO_PAGES(info.file_size), &hypervisor_elf);
+        efi::physical_address_t elf_base;
+        status = bs->allocate_pages(efi::allocate_any_pages, EfiBootServicesData, EFI_SIZE_TO_PAGES(file_info.file_size), &elf_base);
         if (status != 0)
         {
-            con->output_string(con, L"Failed to allocate memory for elf\r\n");
+            console::PrintString("Failed to allocate memory for ELF file!\n");
             return;
         }
 
-        // Copy file to memory buffer
-        uint64_t total_copied = 0;
-
-        while (total_copied < info.file_size)
+        buffer_size = file_info.file_size;
+        status = hypervisor_file->read(hypervisor_file, &buffer_size, (void*) elf_base);
+        if (status != 0)
         {
-            uint64_t buffer_size = info.file_size;
-            status = hypervisor_file->read(hypervisor_file, &buffer_size, (void*)((uint64_t)(hypervisor_elf) + total_copied));
-            if (status != 0)
+            console::PrintString("Failed to read ELF file!\n");
+        }
+
+        auto ehdr = reinterpret_cast<elf::elf64_ehdr*>(elf_base);
+        auto phdrs = reinterpret_cast<elf::elf64_phdr*>(elf_base + ehdr->e_phoff);
+
+        uint64_t sections_combined_size = 0;
+        for (int i = 0; i < ehdr->e_phnum; i++)
+        {
+            auto last_offset = phdrs[i].p_vaddr + phdrs[i].p_memsz;
+            if (last_offset > sections_combined_size)
             {
-                con->output_string(con, L"Failed to read elf\r\n");
+                sections_combined_size = last_offset;
             }
-
-            total_copied += buffer_size;
-            log::HexNumber(total_copied);
         }
+
+        console::PrintString("ELF size in memory: ");
+        console::PrintHex(sections_combined_size);
+        console::PrintString("\n");
+
+        efi::physical_address_t target_base;
+        status = bs->allocate_pages(efi::allocate_any_pages, EfiRuntimeServicesCode, EFI_SIZE_TO_PAGES(sections_combined_size), &target_base);
+        if (status != 0)
+        {
+            console::PrintString("Failed to allocate memory for hypervisor!\n");
+            return;
+        }
+
+        console::PrintString("Mapping ELF to: ");
+        console::PrintHex(target_base);
+        console::PrintString("\n");
+
+        for (int i = 0; i < ehdr->e_phnum; i++)
+        {
+            if (phdrs[i].p_type != PT_LOAD) continue;
+
+            console::PrintString("Found loadable section!\n");
+
+            auto target_offset = target_base + phdrs[i].p_vaddr;
+            buffer_size = phdrs[i].p_filesz;
+            bs->copy_mem((void*) target_offset, (void*) (elf_base + phdrs[i].p_offset), phdrs[i].p_memsz);
+        }
+
+        efi::physical_address_t entrypoint_addr = target_base + ehdr->e_entry;
+        hypervisor_start = (start_func_t) entrypoint_addr;
     }
     
     graphics::image_t* LoadFFImageFromFS(wchar_t* image_path)
