@@ -25,6 +25,8 @@ extern "C" uint64_t entrypoint(kyu::pub::HypervisorStartConfig* config) noexcept
         funcs.PrintString("ERROR: This processor does not support VMX\n");
         return 1;
     }
+
+    funcs.PrintString("Hypervisor support present b0s\n");
     
     return (uint64_t) config->MemeResult;
 }

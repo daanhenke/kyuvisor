@@ -22,10 +22,11 @@ namespace kyu::featurecheck
             return false;
         }
 
-        config->LoaderFunctions.PrintString("reading msr\n");
+        config->LoaderFunctions.PrintString("Reading msr: ");
 
         auto msr = asm64::_read_msr(0x00000480);
         config->LoaderFunctions.PrintHex(msr);
+        config->LoaderFunctions.PrintString("\n");
 
         return true;
     }
