@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "config.hh"
 #include "mm/MemoryAllocator.hh"
+#include "asm/instructions.hh"
 
 class AyLmao
 {
@@ -16,16 +17,28 @@ extern "C" uint64_t entrypoint(kyu::pub::HypervisorStartConfig* config) noexcept
     kyu::config = config;
     
     config->LoaderFunctions.PrintString("Hello from Hypervisor!\n");
-
-    config->LoaderFunctions.PrintString("Initializing memory allocator @");
-    config->LoaderFunctions.PrintHex((uint64_t) config->PreparedMemoryRegion);
-    config->LoaderFunctions.PrintString(" with size of ");
-    config->LoaderFunctions.PrintHex(config->PreparedMemorySize * 4096);
-    config->LoaderFunctions.PrintString(" bytes\n");
-    
     kyu::mm::allocator.Initialize(config->PreparedMemoryRegion, config->PreparedMemorySize);
     
-    auto test = new AyLmao();
+    kyu::asm64::cpuid_regs_t reggies;
+    reggies.eax = 0;
+    kyu::asm64::_cpuid(&reggies);
+    char meme[13];
+    meme[12] = 0;
+    for (int i = 0; i < 4; i++)
+    {
+        meme[i] = reggies.as_string[i + 4];
+        meme[i + 4] = reggies.as_string[i + 12];
+        meme[i + 8] = reggies.as_string[i + 8];
+    }
+    config->LoaderFunctions.PrintString("Vendor according to cpuid: ");
+    config->LoaderFunctions.PrintString(meme);
+    config->LoaderFunctions.PrintString("\n");
+    config->LoaderFunctions.PrintHex(reggies.ebx);
+    config->LoaderFunctions.PrintString("\n");
+    config->LoaderFunctions.PrintHex(reggies.edx);
+    config->LoaderFunctions.PrintString("\n");
+    config->LoaderFunctions.PrintHex(reggies.ecx);
+    config->LoaderFunctions.PrintString("\n");
     
     return (uint64_t) config->MemeResult;
 }

@@ -6,7 +6,8 @@ BUILD_POSTFIX := visor
 SOURCES := \
 	main.cc \
 	mm/MemoryAllocator.cc \
-	mm/PageBitmap.cc
+	mm/PageBitmap.cc \
+	asm/instructions.asm
 
 include $(CUR_DIR)/../../make/common.mk
 
