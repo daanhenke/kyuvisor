@@ -3,8 +3,20 @@ TARGETS_DIR := $(CUR_DIR)/targets
 
 TARGETS := efi visor
 
+ISO := $(CUR_DIR)build/iso.iso
+
 .PHONY: all
-all: $(TARGETS)
+all: $(TARGETS) $(ISO)
+
+.PHONY: clean
+clean:
+	@rm -r $(CUR_DIR)build
+
+.PHONY: iso
+iso: $(ISO)
+
+$(ISO): $(TARGETS)
+	genisoimage -o $@ -r -J $(CUR_DIR)build/out
 
 $(TARGETS):
 	$(MAKE) -f $(TARGETS_DIR)/$@/Makefile

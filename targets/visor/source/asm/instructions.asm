@@ -19,3 +19,37 @@ _cpuid:
 
     leave
     ret
+
+global _read_cr4
+_read_cr4:
+    push rbp
+    mov rbp, rsp
+
+    mov rax, cr4
+
+    leave
+    ret
+
+global _write_cr4
+_write_cr4:
+    push rbp
+    mov rbp, rsp
+
+    mov cr4, rdi
+
+    leave
+    ret
+
+global _read_msr
+_read_msr:
+    push rbp
+    mov rbp, rsp
+
+    mov rcx, rdi
+    rdmsr
+
+    shl rdx, 32
+    or rax, rdx
+
+    leave
+    ret

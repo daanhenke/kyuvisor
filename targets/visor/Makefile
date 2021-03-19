@@ -5,6 +5,7 @@ BUILD_POSTFIX := visor
 
 SOURCES := \
 	main.cc \
+	featurecheck.cc \
 	mm/MemoryAllocator.cc \
 	mm/PageBitmap.cc \
 	asm/instructions.asm
