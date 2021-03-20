@@ -37,6 +37,15 @@ namespace kyu::asm64
         };
     } cr4_t;
 
+    namespace msr
+    {
+        typedef struct vmx_basic_t
+        {
+            static constexpr uint32_t __id = 0x480;
+            uint64_t value;
+        } vmx_basic_t;
+    }
+
     // Base function definitions for reading and writing to registers, should not get called ever!
     template <typename T> T read() noexcept {}
     template <typename T> void write(T value) noexcept {}
@@ -44,4 +53,7 @@ namespace kyu::asm64
     // Control registers
     template <> inline cr4_t read() noexcept { return cr4_t { _read_cr4() }; }
     template <> inline void write(cr4_t value) noexcept { _write_cr4(value.as_uint64); }
+
+    // MSR registers
+    template <> inline msr::vmx_basic_t read() noexcept { return msr::vmx_basic_t { _read_msr(msr::vmx_basic_t::__id) }; }
 }

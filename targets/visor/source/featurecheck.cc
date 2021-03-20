@@ -24,8 +24,9 @@ namespace kyu::featurecheck
 
         config->LoaderFunctions.PrintString("Reading msr: ");
 
-        auto msr = asm64::_read_msr(0x00000480);
-        config->LoaderFunctions.PrintHex(msr);
+        auto msr = asm64::read<asm64::msr::vmx_basic_t>();
+        config->LoaderFunctions.PrintString("msr: ");
+        config->LoaderFunctions.PrintHex(msr.value);
         config->LoaderFunctions.PrintString("\n");
 
         return true;

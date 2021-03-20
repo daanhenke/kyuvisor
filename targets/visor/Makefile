@@ -8,7 +8,8 @@ SOURCES := \
 	featurecheck.cc \
 	mm/MemoryAllocator.cc \
 	mm/PageBitmap.cc \
-	asm/instructions.asm
+	asm/instructions.asm \
+	asm/msr.cc
 
 include $(CUR_DIR)/../../make/common.mk
 
