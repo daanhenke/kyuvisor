@@ -20,6 +20,7 @@ extern "C" uint64_t entrypoint(kyu::pub::HypervisorStartConfig* config) noexcept
     funcs.PrintString("Hello from Hypervisor!\n");
     kyu::mm::allocator.Initialize(config->PreparedMemoryRegion, config->PreparedMemorySize);
     
+    funcs.PrintString("Checking support for VMX\n");
     if (! kyu::featurecheck::SupportsVMX())
     {
         funcs.PrintString("ERROR: This processor does not support VMX\n");
