@@ -11,7 +11,7 @@ namespace kyu::featurecheck
         cpuid.eax = 1;
         asm64::_cpuid(&cpuid);
 
-        if (! cpuid.vmx && false)
+        if (! cpuid.vmx)
         {
             return false;
         }
