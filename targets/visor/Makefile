@@ -27,4 +27,4 @@ $(OBJECT_DIR)/%.cc.o: $(SOURCE_DIR)/%.cc
 
 $(OBJECT_DIR)/%.asm.o: $(SOURCE_DIR)/%.asm
 	@mkdir -p $(dir $@)
-	@$(AS) $(ASFLAGS) -o $@ $<
+	$(AS) $(ASFLAGS) -o $@ $<

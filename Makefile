@@ -1,7 +1,7 @@
 CUR_DIR := $(dir $(realpath $(firstword $(MAKEFILE_LIST))))
-TARGETS_DIR := $(CUR_DIR)/targets
+TARGETS_DIR := $(CUR_DIR)targets
 
-TARGETS := efi visor
+TARGETS := efi visor static-resources
 
 ISO := $(CUR_DIR)build/iso.iso
 

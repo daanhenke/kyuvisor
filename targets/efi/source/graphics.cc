@@ -80,7 +80,7 @@ namespace kyu::graphics
 
     void DrawBackground()
     {
-        static auto* weeb_image = loader::LoadFFImageFromFS(L"\\visor\\crusty-smiley.ff");
+        static auto* weeb_image = loader::LoadFFImageFromFS(L"\\visor\\images\\crusty-smiley.ff");
 
         if (weeb_image == nullptr)
         {
@@ -164,6 +164,6 @@ namespace kyu::graphics
 
     void LoadFont()
     {
-        font_image = loader::LoadFFImageFromFS(L"\\visor\\font12.ff");
+        font_image = loader::LoadFFImageFromFS(L"\\visor\\images\\font12.ff");
     }
 }
