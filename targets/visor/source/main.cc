@@ -28,7 +28,7 @@ extern "C" uint64_t entrypoint(kyu::pub::HypervisorStartConfig* config) noexcept
 
     funcs.PrintString("Hypervisor support present b0ss\n");
     
-    return (uint64_t) 0;
+    return 0;
 }
 
 kyu::pub::HypervisorStartConfig* kyu::config = nullptr;
