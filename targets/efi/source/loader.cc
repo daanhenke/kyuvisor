@@ -38,6 +38,9 @@ namespace kyu::loader
         
         config.LoaderFunctions.PrintString = LoaderPrintString;
         config.LoaderFunctions.PrintHex = LoaderPrintHex;
+        config.LoaderFunctions.CPUCount = LoaderCPUCount;
+        config.LoaderFunctions.CPUCurrent = LoaderCPUCurrent;
+        config.LoaderFunctions.CPUExecuteOnAllCores = LoaderCPUExecuteOnAllCores;
 
         return hypervisor_start(&config);
     }
@@ -196,7 +199,7 @@ namespace kyu::loader
         
         status = efi::system_table->boot_services->allocate_pages(
             efi::allocate_any_pages,
-            EfiRuntimeServicesData,
+            EfiBootServicesData,
             EFI_SIZE_TO_PAGES(sizeof(graphics::image_t)),
             (efi::physical_address_t*) &result
         );

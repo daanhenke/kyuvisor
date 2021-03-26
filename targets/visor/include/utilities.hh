@@ -10,3 +10,5 @@ namespace kyu::utilities
         return (bytes >> page_shift) + (~(bytes & ~((1 << page_shift) - 1)) != 0);
     } 
 }
+
+extern "C" void* memcpy(void* dst, const void* src, unsigned int cnt);

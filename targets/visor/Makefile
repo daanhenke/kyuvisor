@@ -6,17 +6,19 @@ BUILD_POSTFIX := visor
 SOURCES := \
 	main.cc \
 	featurecheck.cc \
+	utilities.cc \
+	killme.c \
+	vcpu/vcpu.cc \
 	mm/MemoryAllocator.cc \
 	mm/PageBitmap.cc \
-	asm/instructions.asm \
-	asm/msr.cc
+	asm/instructions.asm 
 
 include $(CUR_DIR)/../../make/common.mk
 
 ASFLAGS = -g -f elf64 -i $(INCLUDE_DIR)
 CFLAGS = -fpic -fno-stack-protector -mno-red-zone -I$(INCLUDE_DIR) -fno-threadsafe-statics
 CXXFLAGS = $(CFLAGS) -std=c++20 -fno-exceptions
-LDFLAGS = -z nodefaultlib -e entrypoint
+LDFLAGS = -z nodefaultlib -e entrypoint 
 
 $(OUT_DIR)/kyuvisor.elf: $(OBJECTS)
 	@mkdir -p $(dir $@)
@@ -25,6 +27,10 @@ $(OUT_DIR)/kyuvisor.elf: $(OBJECTS)
 $(OBJECT_DIR)/%.cc.o: $(SOURCE_DIR)/%.cc
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -o $@ -c $<
+
+$(OBJECT_DIR)/%.c.o: $(SOURCE_DIR)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(OBJECT_DIR)/%.asm.o: $(SOURCE_DIR)/%.asm
 	@mkdir -p $(dir $@)

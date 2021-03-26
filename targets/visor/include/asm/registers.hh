@@ -39,7 +39,7 @@ namespace kyu::asm64
 
     typedef union vmx_basic_t
     {
-        uint64_t value;
+        uint64_t as_uint64;
 
         struct
         {
@@ -57,7 +57,7 @@ namespace kyu::asm64
 
     typedef union vmx_ept_vpid_cap_t
     {
-        uint64_t value;
+        uint64_t as_uint64;
 
         struct
         {

@@ -1,7 +1,7 @@
 #pragma once
 
 #define CONSOLE_WIDTH 48
-#define CONSOLE_HEIGHT 24
+#define CONSOLE_HEIGHT 48
 
 #include <stdint.h>
 

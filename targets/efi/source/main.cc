@@ -6,6 +6,7 @@
 #include "loader.hh"
 #include "graphics.hh"
 #include "console.hh"
+#include "pub.hh"
 
 using namespace kyu;
 
@@ -32,6 +33,12 @@ efi::status_t efi_main(efi::handle_t module, efi::system_table_t* system_table)
     console::PrintString("Hello from KyuLoader :D\n");
 
     loader::MapHypervisor();
+    
+    if (! InitializeServices())
+    {
+        console::PrintString("Failed to initialize efi services!\n");
+        return EFI_CUSTOM_ERROR(1337);
+    }
 
     uint64_t result = loader::RunHypervisor();
     console::PrintString("Got result: ");

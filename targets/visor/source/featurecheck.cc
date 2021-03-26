@@ -24,6 +24,7 @@ namespace kyu::featurecheck
 
         auto vmx_basic = asm64::msr::read<asm64::msr::vmx_basic_t>();
         if (
+            vmx_basic.vmcs_size_in_bytes > 4096 ||
             ! vmx_basic.true_controls
         )
         {
@@ -32,7 +33,12 @@ namespace kyu::featurecheck
         
         auto vmx_ept_cap = asm64::msr::read<asm64::msr::vmx_ept_vpid_cap_t>();
         if (
-            ! vmx_ept_cap.page_walk_length_4
+            ! vmx_ept_cap.page_walk_length_4 ||
+            ! vmx_ept_cap.memory_type_write_back ||
+            ! vmx_ept_cap.invept ||
+            ! vmx_ept_cap.invept_all_contexts ||
+            ! vmx_ept_cap.execute_only_pages ||
+            ! vmx_ept_cap.pde_2mb_pages
         )
         {
             return false;
