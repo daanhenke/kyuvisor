@@ -6,7 +6,19 @@
 
 void StartCPU() noexcept
 {
-    kyu::config->LoaderFunctions.PrintString("Hello from a core!\n");
+    using namespace kyu;
+    auto funcs = config->LoaderFunctions;
+
+    auto core_index = funcs.CPUCurrent();
+    
+    funcs.PrintString("Hello from core ");
+    funcs.PrintHex(core_index);
+    funcs.PrintString("!\n");
+
+    auto cpu = cpus[core_index];
+    funcs.PrintString("Starting cpu @ ");
+    funcs.PrintHex((uint64_t) cpu);
+    funcs.PrintString("\n");
 }
 
 extern "C" uint64_t entrypoint(kyu::pub::HypervisorStartConfig* config) noexcept
