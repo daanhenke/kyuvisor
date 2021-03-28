@@ -33,7 +33,7 @@ namespace kyu::graphics
 
         int offset_x = 0;
         int offset_y = 0;
-        for (int i = 0; i < string_length(string); i++)
+        for (int i = 0; i < strlen(string); i++)
         {
             auto chr = string[i];
             auto target_x = *x + offset_x * char_width;

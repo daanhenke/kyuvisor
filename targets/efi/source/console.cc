@@ -46,7 +46,7 @@ namespace kyu::console
 
     void PrintString(const char* string)
     {
-        for (int i = 0; i < string_length(string); i++)
+        for (int i = 0; i < strlen(string); i++)
         {
             auto chr = string[i];
 

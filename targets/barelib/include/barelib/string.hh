@@ -1,3 +1,5 @@
 #pragma once
 
-int string_length(const char* string);
+int strlen(const char* string);
+
+int strcmp(const char* s1, const char* s2);

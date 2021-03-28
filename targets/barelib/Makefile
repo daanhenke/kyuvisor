@@ -4,7 +4,8 @@ BARELIB_SOURCE_DIR := $(BARELIB_PROJECT_DIR)/source
 BARELIB_INCLUDE_DIR := $(BARELIB_PROJECT_DIR)/include
 
 BARELIB_SOURCES := \
-	string.cc
+	string.cc \
+	memory.cc
 
 BARELIB_OBJECTS := $(addprefix $(OBJECT_DIR)/barelib/,$(addsuffix .o,$(BARELIB_SOURCES)))
 
