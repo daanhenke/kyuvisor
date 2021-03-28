@@ -21,7 +21,7 @@ extern "C" uint64_t entrypoint(kyu::pub::HypervisorStartConfig* config) noexcept
     if (! featurecheck::SupportsVMX())
     {
         funcs.PrintString("ERROR: This processor does not support VMX\n");
-        return 1;
+        //return 1;
     }
 
     funcs.PrintString("Hypervisor support present b0ss\n");
@@ -37,6 +37,14 @@ extern "C" uint64_t entrypoint(kyu::pub::HypervisorStartConfig* config) noexcept
     {
         cpus[i] = new VirtualizedCPU();
     }
+
+    funcs.PrintString("entrypoint addy: ");
+    funcs.PrintHex((uint64_t) entrypoint);
+    funcs.PrintString("\n");
+
+    funcs.PrintString("crashme addy: ");
+    funcs.PrintHex((uint64_t) CrashMe);
+    funcs.PrintString("\n");
 
     funcs.PrintString("Starting cpu cores!\n");
     CrashMe();

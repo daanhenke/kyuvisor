@@ -150,6 +150,14 @@ namespace kyu::loader
 
         auto ehdr = reinterpret_cast<elf::elf64_ehdr*>(elf_base);
         auto phdrs = reinterpret_cast<elf::elf64_phdr*>(elf_base + ehdr->e_phoff);
+        auto shdrs = reinterpret_cast<elf::elf64_shdr*>(elf_base + ehdr->e_shoff);
+
+        auto str_sect = shdrs[ehdr->e_shstrndx];
+
+        // TODO: REMOVE ME
+        console::PrintString("string table section header: ");
+        console::PrintHex((uint64_t) str_sect.sh_offset);
+        console::PrintString("\n");
 
         uint64_t sections_combined_size = 0;
         for (int i = 0; i < ehdr->e_phnum; i++)
@@ -186,6 +194,31 @@ namespace kyu::loader
             auto target_offset = target_base + phdrs[i].p_vaddr;
             buffer_size = phdrs[i].p_filesz;
             bs->copy_mem((void*) target_offset, (void*) (elf_base + phdrs[i].p_offset), phdrs[i].p_memsz);
+        }
+
+        for (int i = 0; i < ehdr->e_shnum; i++)
+        {
+            auto curr_section = shdrs[i];
+            auto section_name = reinterpret_cast<char*>(elf_base + str_sect.sh_offset + curr_section.sh_name);
+
+            if (strcmp(section_name, ".got") == 0)
+            {
+                console::PrintString("Patching got...\n");
+                
+                auto got = reinterpret_cast<void**>(target_base + curr_section.sh_addr);
+
+                for (int got_index = 0; got_index < curr_section.sh_size / sizeof(void*); got_index++)
+                {
+                    console::PrintString("Patching ");
+                    console::PrintHex((uint64_t) got[got_index]);
+
+                    got[got_index] = reinterpret_cast<void*>(target_base + reinterpret_cast<uintptr_t>(got[got_index]));
+                    
+                    console::PrintString(" to ");
+                    console::PrintHex((uint64_t) got[got_index]);
+                    console::PrintString("\n");
+                }
+            }
         }
 
         efi::physical_address_t entrypoint_addr = target_base + ehdr->e_entry;

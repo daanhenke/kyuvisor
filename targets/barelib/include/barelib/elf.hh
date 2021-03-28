@@ -65,4 +65,18 @@ namespace barelib::elf
         elf_xword_t p_memsz;
         elf_xword_t p_align;
     } elf64_phdr;
+
+    typedef struct _elf64_shdr
+    {
+        elf_word_t sh_name;
+        elf_word_t sh_type;
+        elf_xword_t sh_flags;
+        elf64_address_t sh_addr;
+        elf64_offset_t sh_offset;
+        elf_xword_t sh_size;
+        elf_word_t sh_link;
+        elf_word_t sh_info;
+        elf_xword_t sh_addralign;
+        elf_xword_t sh_entsize;
+    } elf64_shdr;
 }

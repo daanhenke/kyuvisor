@@ -18,7 +18,7 @@ LD = lld-link
 
 VISOR_INCLUDE_DIR=$(CUR_DIR)/../visor/include
 
-CFLAGS = -target x86_64-pc-win32-coff -fno-stack-protector -fshort-wchar -mno-red-zone -I$(INCLUDE_DIR) -I$(BARELIB_INCLUDE_DIR) -I$(VISOR_INCLUDE_DIR) -fno-threadsafe-statics 
+CFLAGS = -target x86_64-pc-win32-coff -fno-stack-protector -fshort-wchar -mno-red-zone -I$(INCLUDE_DIR) -I$(BARELIB_INCLUDE_DIR) -I$(VISOR_INCLUDE_DIR) -fno-threadsafe-statics -fno-builtin -nostdlib
 CXXFLAGS = $(CFLAGS) -std=c++20 -fno-exceptions
 LDFLAGS = -subsystem:efi_application -nodefaultlib -dll -entry:efi_main
 
