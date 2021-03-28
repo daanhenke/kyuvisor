@@ -3,9 +3,11 @@
 #include "mm/MemoryAllocator.hh"
 #include "featurecheck.hh"
 #include "vcpu.hh"
-#include "killme.h"
 
-//extern "C" __attribute__((sysv_abi)) void StartCPU() noexcept;
+void StartCPU() noexcept
+{
+    kyu::config->LoaderFunctions.PrintString("Hello from a core!\n");
+}
 
 extern "C" uint64_t entrypoint(kyu::pub::HypervisorStartConfig* config) noexcept
 {
@@ -38,16 +40,8 @@ extern "C" uint64_t entrypoint(kyu::pub::HypervisorStartConfig* config) noexcept
         cpus[i] = new VirtualizedCPU();
     }
 
-    funcs.PrintString("entrypoint addy: ");
-    funcs.PrintHex((uint64_t) entrypoint);
-    funcs.PrintString("\n");
-
-    funcs.PrintString("crashme addy: ");
-    funcs.PrintHex((uint64_t) CrashMe);
-    funcs.PrintString("\n");
-
     funcs.PrintString("Starting cpu cores!\n");
-    CrashMe();
+    funcs.CPUExecuteOnAllCores(reinterpret_cast<kyu::pub::core_cb_t>(StartCPU));
     return 0;
 }
 

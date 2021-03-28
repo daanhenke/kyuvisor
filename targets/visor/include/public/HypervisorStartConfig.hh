@@ -4,15 +4,13 @@
 
 namespace kyu::pub
 {
-    extern "C" typedef __attribute__((sysv_abi)) void (*core_cb_t)() noexcept;
+    typedef __attribute__((sysv_abi)) void (*core_cb_t)() noexcept;
 
-    struct _LoaderSharedFunctions;
-
-typedef void (*LoaderPrintString)(const char* string) noexcept __attribute__((sysv_abi));
-typedef void (*LoaderPrintHex)(uint64_t number) noexcept __attribute__((sysv_abi));
+    typedef void (*LoaderPrintString)(const char* string) noexcept __attribute__((sysv_abi));
+    typedef void (*LoaderPrintHex)(uint64_t number) noexcept __attribute__((sysv_abi));
     typedef uint64_t (*LoaderCPUCount)() noexcept __attribute__((sysv_abi));
     typedef uint64_t (*LoaderCPUCurrent)() noexcept __attribute__((sysv_abi));
-    typedef void (*LoaderCPUExecuteOnAllCores)(_LoaderSharedFunctions* funcs) noexcept __attribute__((sysv_abi));
+    typedef void (*LoaderCPUExecuteOnAllCores)(core_cb_t callback) noexcept __attribute__((sysv_abi));
 
     typedef struct _LoaderSharedFunctions
     {
@@ -21,7 +19,6 @@ typedef void (*LoaderPrintHex)(uint64_t number) noexcept __attribute__((sysv_abi
          LoaderCPUCount CPUCount;
          LoaderCPUCurrent CPUCurrent;
          LoaderCPUExecuteOnAllCores CPUExecuteOnAllCores;
-         core_cb_t test;
     } LoaderSharedFunctions;
 
     typedef struct HypervisorStartConfig

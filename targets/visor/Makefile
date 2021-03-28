@@ -7,7 +7,6 @@ SOURCES := \
 	main.cc \
 	featurecheck.cc \
 	utilities.cc \
-	killme.c \
 	vcpu/vcpu.cc \
 	mm/MemoryAllocator.cc \
 	mm/PageBitmap.cc \

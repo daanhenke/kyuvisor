@@ -49,14 +49,20 @@ uint64_t LoaderCPUCurrent() noexcept
     return res;
 }
 
-void LoaderCPUExecuteOnAllCores(kyu::pub::LoaderSharedFunctions* funcs) noexcept
+void StartupAllApsCallback(void* argument)
 {
-    funcs->test();
+    auto cb = reinterpret_cast<kyu::pub::core_cb_t>(argument);
+    cb();
+}
+
+void LoaderCPUExecuteOnAllCores(kyu::pub::core_cb_t callback) noexcept
+{
+    callback();
 
     if (LoaderCPUCount() == 1) return;
     kyu::console::PrintString("starting other cores\n");
 
-//    mp_services->startup_all_aps(mp_services, (kyu::efi::protocol::ap_procedure_t) OtherAPS, 1, nullptr, 0, nullptr, nullptr);
+    mp_services->startup_all_aps(mp_services, (kyu::efi::protocol::ap_procedure_t) StartupAllApsCallback, 1, nullptr, 0, reinterpret_cast<void*>(callback), nullptr);
 }
 
 extern "C" void* memcpy(void* dst, const void* src, unsigned int cnt)
