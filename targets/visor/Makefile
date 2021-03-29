@@ -7,10 +7,11 @@ SOURCES := \
 	main.cc \
 	featurecheck.cc \
 	utilities.cc \
-	vcpu/vcpu.cc \
+	vcpu/VirtualizedCPU.cc \
+	vcpu/CPUContext_Methods.asm \
 	mm/MemoryAllocator.cc \
 	mm/PageBitmap.cc \
-	asm/instructions.asm 
+	asm/instructions.asm
 
 include $(CUR_DIR)/../../make/common.mk
 include $(CUR_DIR)/../barelib/Makefile

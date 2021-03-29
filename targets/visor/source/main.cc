@@ -2,7 +2,7 @@
 #include "config.hh"
 #include "mm/MemoryAllocator.hh"
 #include "featurecheck.hh"
-#include "vcpu.hh"
+#include "vcpu/VirtualizedCPU.hh"
 
 void StartCPU() noexcept
 {
@@ -16,9 +16,12 @@ void StartCPU() noexcept
     funcs.PrintString("!\n");
 
     auto cpu = cpus[core_index];
-    funcs.PrintString("Starting cpu @ ");
-    funcs.PrintHex((uint64_t) cpu);
-    funcs.PrintString("\n");
+
+    auto success = cpu->Start();
+
+    funcs.PrintString("Core ");
+    funcs.PrintHex(core_index);
+    funcs.PrintString(success ? " started succesfully!\n" : " failed to start!\n");
 }
 
 extern "C" uint64_t entrypoint(kyu::pub::HypervisorStartConfig* config) noexcept

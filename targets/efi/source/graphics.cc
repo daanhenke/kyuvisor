@@ -64,6 +64,12 @@ namespace kyu::graphics
 
     void DrawConsole()
     {
+        if (console::GetFullScreenRefresh())
+        {
+            DrawBackground();
+            console::SetFullScreenRefresh(false);
+        }
+
         static uint64_t char_width = font_image->width / 16;
         static uint64_t char_height = font_image->height / 16;
 
@@ -80,6 +86,13 @@ namespace kyu::graphics
 
     void DrawBackground()
     {
+        efi::protocol::graphics_output_blt_pixel_t black;
+        black.red = 0;
+        black.green = 0;
+        black.blue = 0;
+        
+        protocol->blt(protocol, &black, efi::protocol::blt_video_fill, 0, 0, 0, 0, protocol->mode->info->horizontal_resolution, protocol->mode->info->vertical_resolution, 0);
+
         static auto* weeb_image = loader::LoadFFImageFromFS(L"\\visor\\images\\crusty-smiley.ff");
 
         if (weeb_image == nullptr)

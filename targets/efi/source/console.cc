@@ -10,6 +10,7 @@ namespace kyu::console
     int current_x = 0;
     int current_y = 0;
     char cells[CONSOLE_WIDTH * CONSOLE_HEIGHT];
+    bool full_screen_refresh = false;
 
     void Reset()
     {
@@ -22,6 +23,16 @@ namespace kyu::console
     char GetCell(int x, int y)
     {
         return cells[y * CONSOLE_WIDTH + x];
+    }
+
+    bool GetFullScreenRefresh()
+    {
+        return full_screen_refresh;
+    }
+
+    void SetFullScreenRefresh(bool val)
+    {
+        full_screen_refresh = val;
     }
 
     void PrintHex(uint64_t number)
@@ -42,6 +53,31 @@ namespace kyu::console
         }
 
         PrintString(buff);
+    }
+
+    void ScrollUp(uint64_t count = 1)
+    {
+        while (count > 0)
+        {
+            count--;
+
+            for (uint64_t y = 0; y < CONSOLE_HEIGHT - 1; y++)
+            {
+                for (uint64_t x = 0; x < CONSOLE_WIDTH; x++)
+                {
+                    cells[y * CONSOLE_WIDTH + x] = cells[(y + 1) * CONSOLE_WIDTH + x];
+                }
+            }
+
+            for (uint64_t x = 0; x < CONSOLE_WIDTH; x++)
+            {
+                cells[(CONSOLE_HEIGHT - 1) * CONSOLE_WIDTH + x] = '\0';
+            }
+
+            current_y--;
+        }
+
+        SetFullScreenRefresh(true);
     }
 
     void PrintString(const char* string)
@@ -69,6 +105,11 @@ namespace kyu::console
             {
                 current_x = 0;
                 current_y++;
+            }
+
+            if (current_y >= CONSOLE_HEIGHT)
+            {
+                ScrollUp(current_y + 1 - CONSOLE_HEIGHT + 4);
             }
         }
 
