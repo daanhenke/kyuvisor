@@ -9,14 +9,14 @@ namespace kyu
         state = CPUState::Disabled;
     }
 
-    bool LoadVMXON()
+    bool VirtualizedCPU::LoadVMXON()
     {
         FixControlRegisters();
 
         auto vmx_basic = asm64::msr::read<asm64::msr::vmx_basic_t>();
     }
 
-    bool EnterVMX()
+    bool VirtualizedCPU::EnterVMX()
     {
         return LoadVMXON();
     }

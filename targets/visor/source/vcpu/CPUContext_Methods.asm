@@ -5,33 +5,33 @@ CPUContext_Capture:
     pushfq
     
     ; Set all general purpose registers
-    mov CPUContext.rax[rcx], rax
-    mov CPUContext.rcx[rcx], rcx
-    mov CPUContext.rdx[rcx], rdx
-    mov CPUContext.rbx[rcx], rbx
-    mov CPUContext.rbp[rcx], rbp
-    mov CPUContext.rsi[rcx], rsi
-    mov CPUContext.rdi[rcx], rdi
-    mov CPUContext.r8[rcx], r8
-    mov CPUContext.r9[rcx], r9
-    mov CPUContext.r10[rcx], r10
-    mov CPUContext.r11[rcx], r11
-    mov CPUContext.r12[rcx], r12
-    mov CPUContext.r13[rcx], r13
-    mov CPUContext.r14[rcx], r14
-    mov CPUContext.r15[rcx], r15
+    mov [rcx + CPUContext.rax], rax
+    mov [rcx + CPUContext.rcx], rcx
+    mov [rcx + CPUContext.rdx], rdx
+    mov [rcx + CPUContext.rbx], rbx
+    mov [rcx + CPUContext.rbp], rbp
+    mov [rcx + CPUContext.rsi], rsi
+    mov [rcx + CPUContext.rdi], rdi
+    mov [rcx + CPUContext.r8], r8
+    mov [rcx + CPUContext.r9], r9
+    mov [rcx + CPUContext.r10], r10
+    mov [rcx + CPUContext.r11], r11
+    mov [rcx + CPUContext.r12], r12
+    mov [rcx + CPUContext.r13], r13
+    mov [rcx + CPUContext.r14], r14
+    mov [rcx + CPUContext.r15], r15
 
     ; Get rsp from stack
     lea rax, [rsp + 16]
-    mov CPUContext.rsp[rcx], rax
+    mov [rcx + CPUContext.rsp], rax
 
     ; Get return address from the stack
     mov rax, [rsp + 8]
-    mov CPUContext.rip[rcx], rax
+    mov [rcx + CPUContext.rip], rax
 
     ; Get rflags from the stack
     mov rax, [rsp]
-    mov CPUContext.rflags[rcx], rax
+    mov [rcx + CPUContext.rflags], rax
     
 
     xor rax, rax

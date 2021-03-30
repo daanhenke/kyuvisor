@@ -10,7 +10,7 @@ namespace kyu::console
     int current_x = 0;
     int current_y = 0;
     char cells[CONSOLE_WIDTH * CONSOLE_HEIGHT];
-    bool full_screen_refresh = false;
+    bool full_screen_refresh = true;
 
     void Reset()
     {

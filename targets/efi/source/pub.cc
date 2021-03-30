@@ -64,31 +64,3 @@ void LoaderCPUExecuteOnAllCores(kyu::pub::core_cb_t callback) noexcept
 
     mp_services->startup_all_aps(mp_services, (kyu::efi::protocol::ap_procedure_t) StartupAllApsCallback, 1, nullptr, 0, reinterpret_cast<void*>(callback), nullptr);
 }
-
-extern "C" void* memcpy(void* dst, const void* src, unsigned int cnt)
-{
-    char *pszDest = (char *)dst;
-    const char *pszSource =( const char*)src;
-    if((pszDest!= nullptr) && (pszSource!= nullptr))
-    {
-        while(cnt) //till cnt
-        {
-            //Copy byte by byte
-            *(pszDest++)= *(pszSource++);
-            --cnt;
-        }
-    }
-    return dst;
-}
-
-extern "C" int strcmp(const char* s1, const char* s2)
-{
-    while (*s1 == *s2 && *s1 != '\0')
-    {
-        s1++;
-        s2++;
-    }
-
-    return (*(unsigned char*) s1) - (*(unsigned char*) s2);
-}
-

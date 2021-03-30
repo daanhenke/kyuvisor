@@ -17,7 +17,7 @@ namespace kyu::featurecheck
         }
 
         auto cr4 = asm64::read<asm64::cr4_t>();
-        if (cr4.vmxe)
+        if (cr4.vmx_enable)
         {
             return false;
         }
