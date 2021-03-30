@@ -6,6 +6,7 @@
 
 #include "barelib/elf.hh"
 #include "barelib/farbfeld.hh"
+#include "barelib/string.hh"
 
 #include "public/HypervisorStartConfig.hh"
 

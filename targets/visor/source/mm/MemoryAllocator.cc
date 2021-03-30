@@ -17,9 +17,17 @@ namespace kyu::mm
         region_size = free_size = size;
         used_size = 0;
 
+        config->LoaderFunctions.PrintString("MM using base: ");
+        config->LoaderFunctions.PrintHex((uint64_t) base);
+        config->LoaderFunctions.PrintString("\n");
+
         previous_index = 0;
         bitmap = PageBitmap(region_base, size);
         lengthmap = (uint16_t*) ((uint64_t) region_base + (size / 8 + size % 8 != 0));
+        
+        // Allocate the space for our bitmap & lengthmap so it doesn't get used
+        Allocate(size / 8 + (size % 8 != 0));
+        Allocate(sizeof(uint16_t) * (size * 8));
     }
 
     void* MemoryAllocator::Allocate(uint64_t size) noexcept

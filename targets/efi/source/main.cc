@@ -28,7 +28,6 @@ efi::status_t efi_main(efi::handle_t module, efi::system_table_t* system_table)
     graphics::LoadFont();
 
     con->clear_screen(con);
-    graphics::DrawBackground();
     
     console::PrintString("Hello from KyuLoader :D\n");
 

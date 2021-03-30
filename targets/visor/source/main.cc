@@ -2,11 +2,26 @@
 #include "config.hh"
 #include "mm/MemoryAllocator.hh"
 #include "featurecheck.hh"
-#include "vcpu.hh"
+#include "vcpu/VirtualizedCPU.hh"
 
 void StartCPU() noexcept
 {
-    kyu::config->LoaderFunctions.PrintString("Hello from a core!\n");
+    using namespace kyu;
+    auto funcs = config->LoaderFunctions;
+
+    auto core_index = funcs.CPUCurrent();
+    
+    funcs.PrintString("Hello from core ");
+    funcs.PrintHex(core_index);
+    funcs.PrintString("!\n");
+
+    auto cpu = cpus[core_index];
+
+    auto success = cpu->Start();
+
+    funcs.PrintString("Core ");
+    funcs.PrintHex(core_index);
+    funcs.PrintString(success ? " started succesfully!\n" : " failed to start!\n");
 }
 
 extern "C" uint64_t entrypoint(kyu::pub::HypervisorStartConfig* config) noexcept
