@@ -2,6 +2,7 @@
 
 global CPUContext_Capture
 CPUContext_Capture:
+    ; Push flags to the stack
     pushfq
     
     ; Set all general purpose registers
@@ -29,7 +30,7 @@ CPUContext_Capture:
     mov rax, [rsp + 8]
     mov CPUContext.rip[rcx], rax
 
-    ; Get rflags from the stack
+    ; Get flags from the stack
     mov rax, [rsp]
     mov CPUContext.rflags[rcx], rax
     
