@@ -73,3 +73,24 @@ _read_msr:
 
     leave
     ret
+
+global _vmx_on
+_vmx_on:
+    push rbp
+    mov rbp, rsp
+
+    vmxon [rdi]
+
+    leave
+    ret
+
+
+global _inv_vpid
+_inv_vpid:
+    push rbp
+    mov rbp, rsp
+
+    invvpid rdi, [rsi]
+
+    leave
+    ret

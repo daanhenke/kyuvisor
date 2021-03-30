@@ -42,4 +42,33 @@ namespace kyu::asm64
 
     NASM_EXPORT uint64_t _read_msr(uint32_t index);
     NASM_EXPORT void _write_msr(uint32_t index, uint64_t value);
+
+    NASM_EXPORT void _vmx_on(vmcs_t* vmxon_struct);
+
+    enum class invvpid_type_t : uint32_t
+    {
+        individual_address = 0,
+        single_context,
+        all_contexts,
+        single_context_retaining_globals
+    };
+
+    typedef struct _invvpid_desc_t
+    {
+        uint64_t ept;
+        uint64_t reserved;
+    } invvpid_desc_t;
+
+    NASM_EXPORT void _inv_vpid(invvpid_type_t type, invvpid_desc_t* descriptor);
+    
+    inline void inv_vpid(invvpid_type_t type, invvpid_desc_t* descriptor = nullptr)
+    {
+        if (descriptor == nullptr)
+        {
+            static invvpid_desc_t default_descriptor {};
+            descriptor = &default_descriptor;
+        }
+
+        _inv_vpid(type, descriptor);
+    }
 }

@@ -16,6 +16,11 @@ namespace kyu
         auto vmx_basic = asm64::msr::read<asm64::msr::vmx_basic_t>();
 
         vmxon.revision_id = vmx_basic.vmcs_revision_id;
+        asm64::_vmx_on(&vmxon);
+
+        state = CPUState::Initializing;
+
+        asm64::inv_vpid(asm64::invvpid_type_t::all_contexts);
 
         return true;
     }
@@ -32,7 +37,7 @@ namespace kyu
         
         if (result == CPUState::Disabled)
         {
-            
+            EnterVMX();
         }
 
         return true;
