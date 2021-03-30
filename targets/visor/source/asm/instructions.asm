@@ -20,6 +20,26 @@ _cpuid:
     leave
     ret
 
+global _read_cr0
+_read_cr0:
+    push rbp
+    mov rbp, rsp
+
+    mov rax, cr0
+
+    leave
+    ret
+
+global _write_cr0
+_write_cr0:
+    push rbp
+    mov rbp, rsp
+
+    mov cr0, rdi
+
+    leave
+    ret
+
 global _read_cr4
 _read_cr4:
     push rbp

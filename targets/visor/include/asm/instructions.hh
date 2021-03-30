@@ -34,6 +34,9 @@ namespace kyu::asm64
 
     NASM_EXPORT void _cpuid(cpuid_regs_t* regs);
     
+    NASM_EXPORT uint64_t _read_cr0();
+    NASM_EXPORT void _write_cr0(uint64_t value);
+
     NASM_EXPORT uint64_t _read_cr4();
     NASM_EXPORT void _write_cr4(uint64_t value);
 

@@ -7,6 +7,9 @@ namespace kyu
     public:
         VirtualizedCPU();
         bool Start();
+
+        // Helper functions
+        void FixControlRegisters();
     };
 
     extern VirtualizedCPU** cpus;
