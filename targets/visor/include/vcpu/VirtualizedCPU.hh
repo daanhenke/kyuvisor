@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vcpu/CPUContext.hh"
+#include "asm/vmcx.hh"
 
 namespace kyu
 {
@@ -24,6 +25,9 @@ namespace kyu
     protected:
         CPUState state;
         CPUContext context;
+
+        vmcs_t vmxon;
+        vmcs_t vmcs;
     };
 
     extern VirtualizedCPU** cpus;

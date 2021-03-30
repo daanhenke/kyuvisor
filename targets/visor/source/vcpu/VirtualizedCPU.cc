@@ -14,6 +14,10 @@ namespace kyu
         FixControlRegisters();
 
         auto vmx_basic = asm64::msr::read<asm64::msr::vmx_basic_t>();
+
+        vmxon.revision_id = vmx_basic.vmcs_revision_id;
+
+        return true;
     }
 
     bool VirtualizedCPU::EnterVMX()
