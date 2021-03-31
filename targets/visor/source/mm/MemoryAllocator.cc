@@ -66,7 +66,14 @@ namespace kyu::mm
 }
 
 #include <cstddef>
+#include <new>
 void* operator new(size_t size)
+{
+    return kyu::mm::allocator.Allocate(size);
+}
+
+
+void* operator new(size_t size, std::align_val_t align)
 {
     return kyu::mm::allocator.Allocate(size);
 }

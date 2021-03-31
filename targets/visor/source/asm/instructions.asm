@@ -20,6 +20,26 @@ _cpuid:
     leave
     ret
 
+global _read_cr0
+_read_cr0:
+    push rbp
+    mov rbp, rsp
+
+    mov rax, cr0
+
+    leave
+    ret
+
+global _write_cr0
+_write_cr0:
+    push rbp
+    mov rbp, rsp
+
+    mov cr0, rdi
+
+    leave
+    ret
+
 global _read_cr4
 _read_cr4:
     push rbp
@@ -50,6 +70,27 @@ _read_msr:
 
     shl rdx, 32
     or rax, rdx
+
+    leave
+    ret
+
+global _vmx_on
+_vmx_on:
+    push rbp
+    mov rbp, rsp
+
+    vmxon [rdi]
+
+    leave
+    ret
+
+
+global _inv_vpid
+_inv_vpid:
+    push rbp
+    mov rbp, rsp
+
+    invvpid rdi, [rsi]
 
     leave
     ret
