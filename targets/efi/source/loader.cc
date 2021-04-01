@@ -210,14 +210,24 @@ namespace kyu::loader
 
                 for (int got_index = 0; got_index < curr_section.sh_size / sizeof(void*); got_index++)
                 {
-                    console::PrintString("Patching ");
-                    console::PrintHex((uint64_t) got[got_index]);
-
                     got[got_index] = reinterpret_cast<void*>(target_base + reinterpret_cast<uintptr_t>(got[got_index]));
-                    
-                    console::PrintString(" to ");
-                    console::PrintHex((uint64_t) got[got_index]);
-                    console::PrintString("\n");
+                }
+            }
+
+            // TODO: ALSO CHECK FOR SECTION TYPE?
+            if (strcmp(section_name, ".init_array") == 0)
+            {
+                console::PrintString("Executing init array\n");
+
+                auto init_array = reinterpret_cast<void**>(elf_base + curr_section.sh_offset);
+                
+                for (int init_index = 0; init_index < curr_section.sh_size / sizeof(void*); init_index++)
+                {
+                    auto offset = init_array[init_index];
+
+                    // lol, maybe typedef this one
+                    auto func = (void (*)())(target_base + (uint64_t) offset);
+                    func();
                 }
             }
         }

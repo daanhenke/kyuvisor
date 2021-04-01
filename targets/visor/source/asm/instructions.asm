@@ -74,6 +74,36 @@ _read_msr:
     leave
     ret
 
+global _store_gdt
+_store_gdt:
+    push rbp
+    mov rbp, rsp
+
+    sgdt [rdi]
+
+    leave
+    ret
+
+global _load_gdt
+_load_gdt:
+    push rbp
+    mov rbp, rsp
+
+    lgdt [rdi]
+
+    leave
+    ret
+
+global _load_tr
+_load_tr:
+    push rbp
+    mov rbp, rsp
+
+    ltr [rdi]
+
+    leave
+    ret
+
 global _vmx_on
 _vmx_on:
     push rbp
@@ -81,16 +111,25 @@ _vmx_on:
 
     vmxon [rdi]
 
+    mov rax, 1
+    jbe .fail
+    jmp .no_error
+.fail:
+    mov rax, 0
+.no_error:
+
     leave
     ret
 
 
 global _inv_vpid
 _inv_vpid:
-    push rbp
-    mov rbp, rsp
+
+    xor rax, rax
 
     invvpid rdi, [rsi]
+    ja no_error
 
-    leave
+    mov rax, 0x1
+no_error:
     ret

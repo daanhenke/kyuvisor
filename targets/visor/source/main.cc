@@ -17,6 +17,8 @@ void StartCPU() noexcept
 
     auto cpu = cpus[core_index];
 
+    funcs.PrintHex((uint64_t) cpu);
+
     auto success = cpu->Start();
 
     funcs.PrintString("Core ");

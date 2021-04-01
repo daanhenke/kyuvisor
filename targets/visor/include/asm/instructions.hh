@@ -3,6 +3,9 @@
 #include <stdint.h>
 
 #include "macros.hh"
+#include "asm/vmcs.hh"
+#include "asm/gdt.hh"
+#include "asm/tss.hh"
 
 namespace kyu::asm64
 {
@@ -43,9 +46,13 @@ namespace kyu::asm64
     NASM_EXPORT uint64_t _read_msr(uint32_t index);
     NASM_EXPORT void _write_msr(uint32_t index, uint64_t value);
 
-    NASM_EXPORT void _vmx_on(vmcs_t* vmxon_struct);
+    NASM_EXPORT void _store_gdt(segment_descriptor_register_t* out_reg);
+    NASM_EXPORT void _load_gdt(segment_descriptor_register_t* in_reg);
+    NASM_EXPORT void _load_tr(segment_selector_t* selector);
 
-    enum class invvpid_type_t : uint32_t
+    NASM_EXPORT uint64_t _vmx_on(vmcs_t* vmxon_struct);
+
+    enum invvpid_type_t : uint64_t
     {
         individual_address = 0,
         single_context,
@@ -59,15 +66,19 @@ namespace kyu::asm64
         uint64_t reserved;
     } invvpid_desc_t;
 
-    NASM_EXPORT void _inv_vpid(invvpid_type_t type, invvpid_desc_t* descriptor);
+    NASM_EXPORT void _inv_vpid(uint64_t type, void* descriptor);
     
-    inline void inv_vpid(invvpid_type_t type, invvpid_desc_t* descriptor = nullptr)
+    inline void inv_vpid(uint64_t type, invvpid_desc_t* descriptor = nullptr)
     {
         if (descriptor == nullptr)
         {
-            static invvpid_desc_t default_descriptor {};
+            static invvpid_desc_t default_descriptor {0, 0};
             descriptor = &default_descriptor;
         }
+
+        kyu::config->LoaderFunctions.PrintString("Crashing now:\n");
+        kyu::config->LoaderFunctions.PrintHex((uint64_t) type);
+        kyu::config->LoaderFunctions.PrintHex((uint64_t) descriptor);
 
         _inv_vpid(type, descriptor);
     }

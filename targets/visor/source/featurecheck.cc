@@ -38,7 +38,8 @@ namespace kyu::featurecheck
             ! vmx_ept_cap.invept ||
             ! vmx_ept_cap.invept_all_contexts ||
             ! vmx_ept_cap.execute_only_pages ||
-            ! vmx_ept_cap.pde_2mb_pages
+            ! vmx_ept_cap.pde_2mb_pages ||
+            ! vmx_ept_cap.invvpid_all_contexts
         )
         {
             return false;

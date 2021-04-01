@@ -37,10 +37,6 @@ namespace kyu::mm
 
     void* MemoryAllocator::AllocatePages(uint64_t pages) noexcept
     {
-        config->LoaderFunctions.PrintString("Allocating ");
-        config->LoaderFunctions.PrintHex(pages);
-        config->LoaderFunctions.PrintString(" pages!\n");
-
         previous_index = bitmap.FindFirstUnset(previous_index, pages);
         if (previous_index == -1)
         {
@@ -51,10 +47,6 @@ namespace kyu::mm
                 return nullptr;
             }
         }
-
-        config->LoaderFunctions.PrintString("At ");
-        config->LoaderFunctions.PrintHex(previous_index);
-        config->LoaderFunctions.PrintString(" !\n");
 
         for (int i = 0; i < pages; i++) bitmap.SetBit(previous_index + i, 1);
         lengthmap[previous_index] = pages;
